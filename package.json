@@ -96,7 +96,8 @@
     "zod": "3.25.76"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "provenance": true
   },
   "release": {
     "branches": [
