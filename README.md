@@ -29,7 +29,7 @@ npm install @form-atoms/upload-atom
 
 ```tsx
 import { fromAtom, useForm, useFieldErrors } from "form-atoms";
-import { uploadAtom, FileUpload } from "@form-atoms/upload-atom";
+import { uploadAtom, FileInput, FileUpload } from "@form-atoms/upload-atom";
 
 import { fetchDirectUploadUrl, postFile } from "@/cloudflare";
 
