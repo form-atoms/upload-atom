@@ -1,0 +1,56 @@
+name: 🎨 Storybook Docs 📄
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+jobs:
+  storybook:
+    name: 🎨 Storybook Build & Deploy to GH Pages
+    if: ${{!startsWith(github.event.head_commit.message, 'chore:') && !startsWith(github.event.pull_request.title, 'chore:') && !startsWith(github.event.head_commit.message, 'chore(') && !startsWith(github.event.pull_request.title, 'chore(') }}
+    permissions:
+      pages: write # to deploy to Pages
+      id-token: write # to verify the deployment originates from an appropriate source
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+
+      - name: Cache node_modules
+        id: cache-node-modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+
+      - name: Install
+        uses: borales/actions-yarn@v5
+        with:
+          cmd: install
+
+      - name: Build Package
+        uses: borales/actions-yarn@v5
+        with:
+          cmd: build
+
+      - name: Build Storybook Docs
+        uses: borales/actions-yarn@v5
+        with:
+          cmd: storybook:build
+
+      - name: Upload Storybook
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: storybook-static
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
+        with:
+          token: ${{ github.token }}

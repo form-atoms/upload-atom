@@ -1,0 +1,63 @@
+name: 🚀 Release
+
+on:
+  push:
+    branches:
+      - main
+      - next
+  pull_request:
+    branches:
+      - main
+      - next
+
+jobs:
+  release:
+    name: 🚀 Release
+    if: ${{!contains(github.event.head_commit.message, '[skip ci]') && !startsWith(github.event.head_commit.message, 'chore:') && !startsWith(github.event.head_commit.message, 'style:')  && !startsWith(github.event.head_commit.message, 'docs:') && !contains(github.event.pull_request.title, '[skip ci]') && !startsWith(github.event.pull_request.title, 'chore:') && !startsWith(github.event.pull_request.title, 'style:') && !startsWith(github.event.pull_request.title, 'docs:') && !startsWith(github.event.head_commit.message, 'chore(') && !startsWith(github.event.head_commit.message, 'style(') && !startsWith(github.event.head_commit.message, 'docs(') && !startsWith(github.event.pull_request.title, 'chore(') && !startsWith(github.event.pull_request.title, 'style(') && !startsWith(github.event.pull_request.title, 'docs(') }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - run: echo ${{ github.workspace }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+
+      - name: Cache node_modules
+        id: cache-node-modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+
+      - name: 🏗️ Install
+        uses: borales/actions-yarn@v5
+        with:
+          cmd: install
+
+      - name: ✅ Typecheck
+        run: yarn typecheck
+
+      - name: 🧪 Test
+        run: yarn test:cov
+
+      - name: 📊 Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          directory: coverage
+          verbose: true
+
+      - name: 🔨 Build
+        uses: borales/actions-yarn@v5
+        with:
+          cmd: build
+
+      - name: 🚢 Release
+        uses: borales/actions-yarn@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        with:
+          cmd: semantic-release
