@@ -1,14 +1,13 @@
 import { useAtomCallback } from "jotai/utils";
 import { useCallback } from "react";
 import { type FieldAtom, useFieldValue } from "form-atoms";
-import { ListAtom, listAtom } from "@form-atoms/list-atom";
+import { type ListItem, listAtom } from "@form-atoms/list-atom";
 
 import { FileUpload } from "./file-upload";
 import { uploadAtom } from "../atoms";
 import { PicoFieldErrors } from "../scenarios/PicoFieldErrors";
 
 import { createListStory, render } from "../scenarios/createListStory";
-import { ListItemForm } from "@form-atoms/list-atom/dist/atoms/list-atom/listItemForm";
 
 export default {
   title: "components/FileUpload",
@@ -35,9 +34,6 @@ const fileList = listAtom({
     }),
   }),
 });
-
-type ListItem<T> =
-  T extends ListAtom<infer Fields> ? ListItemForm<Fields> : never;
 
 const Image = ({ url }: { url: FieldAtom<string> }) => {
   const value = useFieldValue(url);
