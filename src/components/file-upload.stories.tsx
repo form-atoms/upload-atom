@@ -1,11 +1,11 @@
 import { type FieldAtom, useFieldValue } from "form-atoms";
+import { ErrorBoundary } from "react-error-boundary";
 
 import { FileUpload } from "./file-upload";
 import { FileInput } from "./file-input";
 
 import { uploadAtom } from "../atoms";
 import { PicoFieldErrors } from "../scenarios/PicoFieldErrors";
-
 import { meta, formStory } from "../scenarios/StoryForm";
 
 export default {
@@ -45,29 +45,29 @@ export const ImageUpload = formStory({
     fields: { profilePic },
     children: ({ fields }) => (
       <div>
-        <FileUpload autostart={false} atom={fields.profilePic}>
-          {({ isLoading, isSuccess, isError }) => (
-            <div>
-              {isLoading ? (
-                <>
-                  <p>Please wait...</p>
-                  <progress />
-                </>
-              ) : isSuccess ? (
-                <p>
-                  <Image url={fields.profilePic} />
-                  <ins>Done. </ins>
-                </p>
-              ) : isError ? (
-                <>
-                  <p>Failed to upload. Please retry</p>
-                </>
-              ) : (
-                <></>
-              )}
-            </div>
-          )}
-        </FileUpload>
+        <ErrorBoundary fallback={<p>Failed to upload. Please retry</p>}>
+          <FileUpload
+            autostart={false}
+            atom={fields.profilePic}
+            fallback={
+              <>
+                <p>Please wait...</p>
+                <progress />
+              </>
+            }
+          >
+            {({ isSuccess }) => (
+              <div>
+                {isSuccess && (
+                  <p>
+                    <Image url={fields.profilePic} />
+                    <ins>Done. </ins>
+                  </p>
+                )}
+              </div>
+            )}
+          </FileUpload>
+        </ErrorBoundary>
         <FileInput atom={fields.profilePic} />
         <PicoFieldErrors field={fields.profilePic} />
       </div>

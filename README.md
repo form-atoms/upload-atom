@@ -21,12 +21,15 @@ npm install @form-atoms/upload-atom
 - 🧩 **formAtom integrated:** Your form submit will wait, while the upload is in progress.
 - 🎮 **File Input:** Ready-to-use file input component.
 - ▶️ **Manual or Automatic upload:** Start upload on file selection or manually.
+- ⚛️ **React 19**: uses the `<Suspense>` to manage the loading state.
+- 💥 **ErrorBoundary**: use the [react-error-boundary](https://www.npmjs.com/package/react-error-boundary) to catch upload errors.
 
 ### Quick Start
 
 ```tsx
 import { fromAtom, useForm, useFieldErrors } from "form-atoms";
 import { uploadAtom, FileInput, FileUpload } from "@form-atoms/upload-atom";
+import { ErrorBoundary } from "react-error-boundary";
 
 import { fetchDirectUploadUrl, postFile } from "@/cloudflare";
 
@@ -58,41 +61,45 @@ const Image = ({ url }: { url: FieldAtom<string> }) => {
   );
 };
 
-export const Form = () => {
+export function Form() {
   const { fieldAtoms, submit } = useForm(personForm);
   const { validateStatus } = useFormStatus(form);
   const errors = useFieldErrors(fieldAtoms.profilePic);
 
   return (
     <form onSubmit={submit(console.log)}>
-      <FileUpload atom={fieldAtoms.profilePic}>
-        {({ isIdle, isLoading, isSuccess, isError }) => (
-          <div>
-            {isIdle ? (
-              <>Please choose a file.</>
-            ) : isLoading ? (
-              <p>
-                Please wait... <progress />
-              </p>
-            ) : isSuccess ? (
-              <p>
-                <Image url={fields.profilePic} />
-                <ins>Done. </ins>
-              </p>
-            ) : isError ? (
-              <>
+      <ErrorBoundary
+        fallback={
+          <p>
+            Failed to upload. Use the <code>useFieldErrors()</code> hook to
+            display the reason thrown from your <code>upload</code> action.
+          </p>
+        }
+      >
+        <FileUpload
+          atom={fieldAtoms.profilePic}
+          fallback={
+            <p>
+              Please wait... <progress />
+            </p>
+          }
+        >
+          {({ isIdle, isSuccess }) => (
+            <div>
+              {isIdle ? (
+                <>Please choose a file.</>
+              ) : isSuccess ? (
                 <p>
-                  Failed to upload. Use the <code>useFieldErrors()</code> hook
-                  to display the reason thrown from your <code>upload</code>{" "}
-                  action:
+                  <Image url={fields.profilePic} />
+                  <ins>Done. </ins>
                 </p>
-              </>
-            ) : (
-              <></>
-            )}
-          </div>
-        )}
-      </FileUpload>
+              ) : (
+                <></>
+              )}
+            </div>
+          )}
+        </FileUpload>
+      </ErrorBoundary>
       <FileInput atom={fieldAtoms.profilePic} />
       {errors.map((error, index) => (
         <small key={index}>{error}</small>
@@ -102,7 +109,7 @@ export const Form = () => {
       </button>
     </form>
   );
-};
+}
 ```
 
 See [Storybook docs](https://form-atoms.github.io/upload-atom/) for more.
