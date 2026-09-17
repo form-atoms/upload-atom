@@ -1,6 +1,6 @@
 {
   "name": "@form-atoms/upload-atom",
-  "packageManager": "yarn@4.10.3",
+  "packageManager": "yarn@4.18.0",
   "version": "0.0.0-semantic-release",
   "author": "Miroslav Petrik <miroslavpetrik@outlook.com>",
   "homepage": "https://github.com/form-atoms/upload-atom#readme",
@@ -90,7 +90,7 @@
     "shiki": "^4.4.3",
     "storybook": "^10.6.0",
     "tsdown": "^0.23.0",
-    "typescript": "5.9.3",
+    "typescript": "7.0.2",
     "typescript-eslint": "^8.46.2",
     "vite": "^8.3.0",
     "vitest": "^5.0.1",
