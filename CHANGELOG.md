@@ -1,3 +1,10 @@
+## [1.0.3](https://github.com/form-atoms/upload-atom/compare/v1.0.2...v1.0.3) (2026-09-17)
+
+
+### Bug Fixes
+
+* **useUpload:** fix unknown type ([946ef9a](https://github.com/form-atoms/upload-atom/commit/946ef9ab049a66380e248cfcba78a2c6a0ab362d))
+
 ## [1.0.2](https://github.com/form-atoms/upload-atom/compare/v1.0.1...v1.0.2) (2026-09-17)
 
 
