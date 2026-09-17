@@ -1,5 +1,5 @@
 import { useAtomValue, useSetAtom } from "jotai";
-import { useEffect } from "react";
+import { useEffect, type ReactNode } from "react";
 
 import { UploadAtom } from "../atoms";
 
@@ -13,7 +13,7 @@ type ChildrenProps = {
 type Props<Value> = {
   autostart?: boolean;
   atom: UploadAtom<Value>;
-  children: (props: ChildrenProps) => React.ReactElement;
+  children: (props: ChildrenProps) => ReactNode;
 };
 
 export function FileUpload<Value>({
