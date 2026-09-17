@@ -1,3 +1,10 @@
+## [1.0.2](https://github.com/form-atoms/upload-atom/compare/v1.0.1...v1.0.2) (2026-09-17)
+
+
+### Bug Fixes
+
+* **hooks:** export the useUpload hook for custom inputs ([955aac1](https://github.com/form-atoms/upload-atom/commit/955aac148c035a37b0fcadfac046eeb2fe1edc01))
+
 ## [1.0.1](https://github.com/form-atoms/upload-atom/compare/v1.0.0...v1.0.1) (2026-09-17)
 
 
