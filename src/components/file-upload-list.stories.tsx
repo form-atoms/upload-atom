@@ -1,5 +1,6 @@
 import { useAtomCallback } from "jotai/utils";
 import { useCallback } from "react";
+import { ErrorBoundary } from "react-error-boundary";
 import { type FieldAtom, useFieldValue } from "form-atoms";
 import { type ListItem, listAtom } from "@form-atoms/list-atom";
 
@@ -66,33 +67,39 @@ export const FileUploadList = createListStory({
                   gridTemplateColumns: "auto min-content",
                 }}
               >
-                <FileUpload atom={fields.url}>
-                  {({ isLoading, isSuccess, isError }) => (
-                    <div>
-                      {isLoading ? (
-                        <p>
-                          Please wait... <progress />
-                        </p>
-                      ) : isSuccess ? (
-                        <p>
-                          <Image url={fields.url} />
-                          <ins>Done. </ins>
-                        </p>
-                      ) : isError ? (
-                        <>
+                <ErrorBoundary
+                  fallback={
+                    <>
+                      <p>
+                        Failed to upload. Use the <code>FieldErrors</code>{" "}
+                        component to display the reason thrown from your{" "}
+                        <code>upload</code> action:
+                      </p>
+                      <PicoFieldErrors field={fields.url} />
+                    </>
+                  }
+                >
+                  <FileUpload
+                    atom={fields.url}
+                    fallback={
+                      <p>
+                        Please wait... <progress />
+                      </p>
+                    }
+                  >
+                    {({ isSuccess }) => (
+                      <div>
+                        {isSuccess && (
                           <p>
-                            Failed to upload. Use the <code>FieldErrors</code>{" "}
-                            component to display the reason thrown from your{" "}
-                            <code>upload</code> action:
+                            <Image url={fields.url} />
+                            <ins>Done. </ins>
                           </p>
-                          <PicoFieldErrors field={fields.url} />
-                        </>
-                      ) : (
-                        <></>
-                      )}
-                    </div>
-                  )}
-                </FileUpload>
+                        )}
+                      </div>
+                    )}
+                  </FileUpload>
+                </ErrorBoundary>
+
                 <div>
                   <button
                     type="button"
