@@ -26,7 +26,10 @@ export type UploadAtom<Value> = ExtendFieldAtom<
 
 type UploadAtomConfig<Value> = {
   name?: string;
-  upload: (file: File) => Promise<Value>;
+  upload: (
+    file: File,
+    options: { readonly signal: AbortSignal },
+  ) => Promise<Value>;
 };
 
 export function uploadAtom<Value>({
@@ -34,10 +37,11 @@ export function uploadAtom<Value>({
   ...config
 }: UploadAtomConfig<Value>): UploadAtom<Value> {
   const fileAtom = atom<File | undefined>(undefined);
-  const requestAtom = atom(async (get) => {
+
+  const requestAtom = atom(async (get, options) => {
     const file = get(fileAtom);
 
-    return file && upload(file);
+    return file && upload(file, options);
   });
 
   const field = fieldAtom<Value | undefined>({
