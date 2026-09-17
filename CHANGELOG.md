@@ -1,3 +1,19 @@
+# [2.0.0](https://github.com/form-atoms/upload-atom/compare/v1.0.3...v2.0.0) (2026-09-17)
+
+
+### Features
+
+* **file-upload:** use suspense for loading state & error boundary ([09cbe56](https://github.com/form-atoms/upload-atom/commit/09cbe56c5a2826e94906cf12566406891f806f50))
+
+
+### BREAKING CHANGES
+
+* **file-upload:** requires jotai v3 & react v18
+
+The children no longer provide isLoading nor isError props. Specify your loading UI as the fallback prop.
+
+For the error UI, use the <ErrorBoundary> component to catch the the errors from the Suspense boundary.
+
 # [2.0.0-next.1](https://github.com/form-atoms/upload-atom/compare/v1.0.2...v2.0.0-next.1) (2026-09-17)
 
 
