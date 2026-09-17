@@ -1,3 +1,10 @@
+## [2.0.1](https://github.com/form-atoms/upload-atom/compare/v2.0.0...v2.0.1) (2026-09-17)
+
+
+### Bug Fixes
+
+* **upload:** pass abort signal ([831748b](https://github.com/form-atoms/upload-atom/commit/831748ba3d79c9add85495f369590522db61f59e))
+
 # [2.0.0](https://github.com/form-atoms/upload-atom/compare/v1.0.3...v2.0.0) (2026-09-17)
 
 
