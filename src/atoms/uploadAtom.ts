@@ -17,6 +17,10 @@ export type UploadAtom<Value> = ExtendFieldAtom<
      * A read-only atom containing the field's upload status.
      */
     uploadStatus: Atom<UploadStatus>;
+    /**
+     * A read-only atom containing the promise of the uploaded file's value.
+     */
+    requestAtom: Atom<Promise<Value> | undefined>;
   }
 >;
 
@@ -71,6 +75,7 @@ export function uploadAtom<Value>({
   // @ts-expect-error field IS primitive atom
   return extendAtom(field, ({ validateStatus }) => ({
     fileAtom,
+    requestAtom,
     uploadStatus: atom<UploadStatus>((get) => {
       const status = get(validateStatus);
 
