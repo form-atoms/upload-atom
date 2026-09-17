@@ -3,7 +3,7 @@ import { useAtomValue, useSetAtom } from "jotai";
 
 import type { UploadAtom } from "../atoms";
 
-export const useUpload = (uploadAtom: UploadAtom<unknown>) => {
+export function useUpload<T>(uploadAtom: UploadAtom<T>) {
   const atoms = useAtomValue(uploadAtom);
   const setFileAtom = useSetAtom(atoms.fileAtom);
   const reset = useSetAtom(atoms.reset);
@@ -19,4 +19,4 @@ export const useUpload = (uploadAtom: UploadAtom<unknown>) => {
   return {
     setFile,
   };
-};
+}
