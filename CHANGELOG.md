@@ -1,3 +1,16 @@
+# [2.1.0](https://github.com/form-atoms/upload-atom/compare/v2.0.1...v2.1.0) (2026-09-18)
+
+
+### Bug Fixes
+
+* **field-error:** define with a config function ([6d5d253](https://github.com/form-atoms/upload-atom/commit/6d5d2533e0e2aa698b40214c5506341549f1e1bc))
+* **reset:** enable resetting ([c537d24](https://github.com/form-atoms/upload-atom/commit/c537d24767155a65c65e0635dafdbcc2545d8ee7))
+
+
+### Features
+
+* **manual-start:** via factory ([d84e391](https://github.com/form-atoms/upload-atom/commit/d84e391387fc9a3ac5a3f5c340ee7a4fa6af04f2))
+
 ## [2.0.1](https://github.com/form-atoms/upload-atom/compare/v2.0.0...v2.0.1) (2026-09-17)
 
 
