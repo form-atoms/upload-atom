@@ -38,14 +38,14 @@ import { ErrorBoundary } from "react-error-boundary";
 
 import { fetchUploadUrl, deliveryUrl, postFile } from "@/lib/cloudflare";
 
-// 1. define your upload atom using some file service (here Cloudflare Images)
+// 1. define your upload atom using some file service
 export const cloudflareUploadAtom = uploadAtom(async (file) => {
   const { id, uploadUrl } = await fetchUploadUrl();
 
   try {
     await postFile(uploadUrl, file);
 
-    return id;
+    return id; // the form field value
   } catch {
     // Throw string reason for the failure.
     throw "Failed to upload.";
@@ -53,12 +53,12 @@ export const cloudflareUploadAtom = uploadAtom(async (file) => {
 });
 
 // 2. Use the uploadAtom inside a form as a regular fieldAtom:
-const personForm = formAtom({
-  profilePic: cloudflareUploadAtom(),
+const userForm = formAtom({
+  avatar: cloudflareUploadAtom(),
 });
 
-// Result to render after successful upload:
-const Image = ({ atom }: { atom: UploadAtom<string> }) => {
+const Avatar = ({ atom }: { atom: UploadAtom<string> }) => {
+  // Read the upload result like a regular fieldValue:
   const cfId = useFieldValue(url);
 
   return (
@@ -71,9 +71,9 @@ const Image = ({ atom }: { atom: UploadAtom<string> }) => {
   );
 };
 
+// 3. Render the FileUpload with suspense fallback, and error boundary:s
 export function Form() {
-  const { fieldAtoms, submit } = useForm(personForm);
-  const errors = useFieldErrors(fieldAtoms.profilePic);
+  const { fieldAtoms, submit } = useForm(userForm);
 
   return (
     <form onSubmit={submit(console.log)}>
@@ -86,7 +86,7 @@ export function Form() {
         }
       >
         <FileUpload
-          atom={fieldAtoms.profilePic}
+          atom={fieldAtoms.avatar}
           fallback={
             <p>
               Please wait... <progress />
@@ -99,7 +99,7 @@ export function Form() {
                 <>Please choose a file.</>
               ) : isSuccess ? (
                 <p>
-                  <Image atom={fields.profilePic} />
+                  <Avatar atom={fields.avatar} />
                   <ins>Done. </ins>
                 </p>
               ) : (
@@ -109,7 +109,7 @@ export function Form() {
           )}
         </FileUpload>
       </ErrorBoundary>
-      <FileInput atom={fieldAtoms.profilePic} />
+      <FileInput atom={fieldAtoms.avatar} />
       <button type="submit">Submit</button>
     </form>
   );
