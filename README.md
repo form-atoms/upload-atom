@@ -71,7 +71,7 @@ const Avatar = ({ atom }: { atom: UploadAtom<string> }) => {
   );
 };
 
-// 3. Render the FileUpload with suspense fallback, and error boundary:s
+// 3. Render the FileUpload with suspense fallback, and error boundary:
 export function Form() {
   const { fieldAtoms, submit } = useForm(userForm);
 
@@ -112,6 +112,38 @@ export function Form() {
       <FileInput atom={fieldAtoms.avatar} />
       <button type="submit">Submit</button>
     </form>
+  );
+}
+```
+
+### With Progress
+
+```tsx
+import { Progress } from "@form-atoms/upload-atom";
+
+// You can use the setProgress callback to update the upload progress (if available):
+export const progressAtom = uploadAtom(async (file, { setProgress }) => {
+  return myTrackUpload(file, { onProgress: setProgress });
+});
+
+export function Form() {
+  return (
+    <FileUpload
+      atom={progressAtom}
+      fallback={
+        <Progress atom={progressAtom}>
+          {({ progress }) => (
+            <>
+              {/* Render the value: */}
+              <p>please wait...</p>
+              <progress value={progress} max={1} />
+            </>
+          )}
+        </Progress>
+      }
+    >
+      {({ isIdle, isSuccess }) => null}
+    </FileUpload>
   );
 }
 ```

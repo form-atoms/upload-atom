@@ -62,7 +62,7 @@ export const ImageUpload = formStory({
                 {isSuccess && (
                   <p>
                     <Image url={fields.avatar} />
-                    <ins>Done. </ins>
+                    <ins>Done.</ins>
                   </p>
                 )}
               </div>

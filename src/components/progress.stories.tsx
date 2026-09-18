@@ -7,11 +7,11 @@ import { uploadAtom } from "../atoms";
 import { PicoFieldErrors } from "../scenarios/PicoFieldErrors";
 import { meta, formStory } from "../scenarios/StoryForm";
 
-import { Image, Preview, IdleMessage } from "../scenarios/components";
+import { Preview, IdleMessage } from "../scenarios/components";
 
 export default {
   ...meta,
-  title: "components/FileUpload",
+  title: "components/Progress",
 };
 
 const withProgress = uploadAtom({
@@ -80,7 +80,7 @@ export const ProgressFallback = formStory({
                 {isSuccess && (
                   <p>
                     <Preview atom={fields.withProgress} />
-                    <ins>Done. </ins>
+                    <ins>Done.</ins>
                   </p>
                 )}
               </div>
