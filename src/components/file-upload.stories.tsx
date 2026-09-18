@@ -1,12 +1,13 @@
 import { type FieldAtom, useFieldValue } from "form-atoms";
 import { ErrorBoundary } from "react-error-boundary";
-
+import { useEffect, useState } from "react";
 import { FileUpload } from "./file-upload";
 import { FileInput } from "./file-input";
 
-import { uploadAtom } from "../atoms";
+import { UploadAtom, uploadAtom } from "../atoms";
 import { PicoFieldErrors } from "../scenarios/PicoFieldErrors";
 import { meta, formStory } from "../scenarios/StoryForm";
+import { useUpload } from "../hooks";
 
 export default {
   ...meta,
@@ -15,7 +16,7 @@ export default {
 
 let id = 1;
 
-const profilePic = uploadAtom({
+const avatar = uploadAtom({
   upload: () =>
     new Promise<string>((resolve) => {
       setTimeout(() => {
@@ -32,6 +33,33 @@ const Image = ({ url }: { url: FieldAtom<string> }) => {
   );
 };
 
+const Preview = ({ atom }: { atom: UploadAtom<string> }) => {
+  const { file } = useUpload(atom);
+  const [src, setSrc] = useState<string | null>(null);
+
+  useEffect(() => {
+    const reader = new FileReader();
+
+    reader.addEventListener("load", () => {
+      setSrc(reader.result as string);
+    });
+
+    if (file) {
+      reader.readAsDataURL(file);
+    }
+  }, [file]);
+
+  return file && src ? (
+    <img width={100} height={100} style={{ marginRight: 20 }} src={src} />
+  ) : null;
+};
+
+const IdleMessage = ({ atom }: { atom: UploadAtom<string> }) => {
+  const { file } = useUpload(atom);
+
+  return file ? "Submit the form to upload the file." : "Please select a file.";
+};
+
 export const ImageUpload = formStory({
   parameters: {
     docs: {
@@ -42,25 +70,34 @@ export const ImageUpload = formStory({
     },
   },
   args: {
-    fields: { profilePic },
+    fields: { avatar },
     children: ({ fields }) => (
       <div>
         <ErrorBoundary fallback={<p>Failed to upload. Please retry</p>}>
           <FileUpload
             autostart={false}
-            atom={fields.profilePic}
+            atom={fields.avatar}
             fallback={
               <>
-                <p>Please wait...</p>
+                <p>
+                  <Preview atom={fields.avatar} />
+                  Please wait...
+                </p>
                 <progress />
               </>
             }
           >
-            {({ isSuccess }) => (
+            {({ isSuccess, isIdle }) => (
               <div>
+                {isIdle && (
+                  <p>
+                    <Preview atom={fields.avatar} />
+                    <IdleMessage atom={fields.avatar} />
+                  </p>
+                )}
                 {isSuccess && (
                   <p>
-                    <Image url={fields.profilePic} />
+                    <Image url={fields.avatar} />
                     <ins>Done. </ins>
                   </p>
                 )}
@@ -68,8 +105,8 @@ export const ImageUpload = formStory({
             )}
           </FileUpload>
         </ErrorBoundary>
-        <FileInput atom={fields.profilePic} />
-        <PicoFieldErrors field={fields.profilePic} />
+        <FileInput atom={fields.avatar} />
+        <PicoFieldErrors field={fields.avatar} />
       </div>
     ),
   },
