@@ -81,10 +81,16 @@ export function uploadAtom<Value>({
   const field = fieldAtom<Value | undefined>({
     ...config,
     value: undefined,
-    validate: async ({ get, set, value }) => {
+    validate: async ({ get, set, value, event }) => {
       if (value) {
         // the file was already uploaded, the value is the response
         return [];
+      }
+
+      if (event === "change") {
+        // when in a list, there is a "change" event emmited when new item is added
+        // skip validation as to not start the upload prematurely
+        return;
       }
 
       try {

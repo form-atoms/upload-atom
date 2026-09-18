@@ -115,7 +115,7 @@ describe("uploadAtom()", () => {
     await act(() => upload.current.setFile(new File([], "progress.jpg")));
     await act(() => actions.current.validate());
 
-    const { result: progress, rerender } = renderHook(() => useProgress(atom));
+    const { result: progress } = renderHook(() => useProgress(atom));
 
     expect(progress.current).toBe(0);
 

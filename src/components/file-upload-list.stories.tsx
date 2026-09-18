@@ -6,7 +6,7 @@ import { type ListItem, listAtom } from "@form-atoms/list-atom";
 import { FileUpload } from "./file-upload";
 import { uploadAtom } from "../atoms";
 import { PicoFieldErrors } from "../storybook/PicoFieldErrors";
-import { Preview } from "../storybook/components";
+import { IdleMessage, Preview } from "../storybook/components";
 import { createListStory, render } from "../storybook/createListStory";
 
 export default {
@@ -22,7 +22,6 @@ const fileList = listAtom({
       upload: () =>
         new Promise<string>((resolve, reject) => {
           setTimeout(() => {
-            console.log(id % 2, id);
             if (id % 2) {
               resolve(`https://picsum.photos/id/${id}/100/100`);
             } else {
@@ -81,8 +80,14 @@ export const FileUploadList = createListStory({
                         </p>
                       }
                     >
-                      {({ isSuccess }) => (
+                      {({ isSuccess, isIdle }) => (
                         <div>
+                          {isIdle && (
+                            <p>
+                              <Preview atom={fields.url} />
+                              <IdleMessage atom={fields.url} />
+                            </p>
+                          )}
                           {isSuccess && (
                             <p>
                               <Preview atom={fields.url} />
