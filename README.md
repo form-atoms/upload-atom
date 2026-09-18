@@ -27,15 +27,20 @@ npm install @form-atoms/upload-atom
 ### Quick Start
 
 ```tsx
-import { fromAtom, useForm, useFieldErrors } from "form-atoms";
-import { uploadAtom, FileInput, FileUpload } from "@form-atoms/upload-atom";
+import { fromAtom, useForm } from "form-atoms";
+import {
+  uploadAtom,
+  FileInput,
+  FileUpload,
+  type UploadAtom,
+} from "@form-atoms/upload-atom";
 import { ErrorBoundary } from "react-error-boundary";
 
-import { fetchDirectUploadUrl, postFile } from "@/cloudflare";
+import { fetchUploadUrl, deliveryUrl, postFile } from "@/lib/cloudflare";
 
 // 1. define your upload atom using some file service (here Cloudflare Images)
 export const cloudflareUploadAtom = uploadAtom(async (file) => {
-  const { id, uploadUrl } = await fetchDirectUploadUrl();
+  const { id, uploadUrl } = await fetchUploadUrl();
 
   try {
     await postFile(uploadUrl, file);
@@ -53,17 +58,21 @@ const personForm = formAtom({
 });
 
 // Result to render after successful upload:
-const Image = ({ url }: { url: FieldAtom<string> }) => {
-  const value = useFieldValue(url);
+const Image = ({ atom }: { atom: UploadAtom<string> }) => {
+  const cfId = useFieldValue(url);
 
   return (
-    <img width={100} height={100} style={{ marginRight: 20 }} src={value} />
+    <img
+      width={100}
+      height={100}
+      style={{ marginRight: 20 }}
+      src={deliveryUrl(cfId)}
+    />
   );
 };
 
 export function Form() {
   const { fieldAtoms, submit } = useForm(personForm);
-  const { validateStatus } = useFormStatus(form);
   const errors = useFieldErrors(fieldAtoms.profilePic);
 
   return (
@@ -90,7 +99,7 @@ export function Form() {
                 <>Please choose a file.</>
               ) : isSuccess ? (
                 <p>
-                  <Image url={fields.profilePic} />
+                  <Image atom={fields.profilePic} />
                   <ins>Done. </ins>
                 </p>
               ) : (
@@ -101,12 +110,7 @@ export function Form() {
         </FileUpload>
       </ErrorBoundary>
       <FileInput atom={fieldAtoms.profilePic} />
-      {errors.map((error, index) => (
-        <small key={index}>{error}</small>
-      ))}
-      <button type="submit" disabled={validateStatus === "validating"}>
-        {validateStatus === "validating" ? "Submitting..." : "Submit"}
-      </button>
+      <button type="submit">Submit</button>
     </form>
   );
 }
