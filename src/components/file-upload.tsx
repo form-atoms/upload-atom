@@ -43,13 +43,13 @@ export function FileUpload<Value>({
   const atoms = useAtomValue(atom);
   const status = useAtomValue(atoms.uploadStatus);
   const file = useAtomValue(atoms.fileAtom);
-  const validate = useSetAtom(atoms.validate);
+  const start = useSetAtom(atoms.startAtom);
 
   useEffect(() => {
     if (file && autostart) {
-      validate();
+      start();
     }
-  }, [file, autostart, validate]);
+  }, [file, autostart, start]);
 
   return status === "idle" ? (
     children({

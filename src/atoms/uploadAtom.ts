@@ -26,15 +26,18 @@ export type UploadAtom<Value> = ExtendFieldAtom<
      * initial states.
      */
     reset: WritableAtom<null, [], void>;
+    /**
+     * A write-only atom for creating the upload promise.
+     */
+    startAtom: WritableAtom<null, [], void>;
   }
 >;
 
+type Options = { readonly signal: AbortSignal };
+
 type UploadAtomConfig<Value> = {
   name?: string;
-  upload: (
-    file: File,
-    options: { readonly signal: AbortSignal },
-  ) => Promise<Value>;
+  upload: (file: File, options: Options) => Promise<Value>;
   getFieldError?(error: unknown): string[];
 };
 
@@ -44,11 +47,23 @@ export function uploadAtom<Value>({
   ...config
 }: UploadAtomConfig<Value>): UploadAtom<Value> {
   const fileAtom = atom<File | undefined>(undefined);
+  const factoryAtom = atom<((options: Options) => Promise<Value>) | undefined>(
+    undefined,
+  );
+  const startAtom = atom(null, (get, set) => {
+    const file = get(fileAtom);
+    if (file) {
+      function factory(options: Options) {
+        return upload(file!, options);
+      }
+
+      set(factoryAtom, () => factory);
+    }
+  });
 
   const requestAtom = atom(async (get, options) => {
-    const file = get(fileAtom);
-
-    return file && upload(file, options);
+    const factory = get(factoryAtom);
+    return factory?.(options);
   });
 
   const field = fieldAtom<Value | undefined>({
@@ -61,11 +76,12 @@ export function uploadAtom<Value>({
       }
 
       try {
-        const result = await get(requestAtom);
-
-        if (!result) {
-          return; // skip validation
+        // start the upload when the form is submitted
+        if (!get(factoryAtom)) {
+          set(startAtom);
         }
+
+        const result = await get(requestAtom);
 
         set(get(field).value, result);
 
@@ -80,8 +96,9 @@ export function uploadAtom<Value>({
   return extendAtom(field, ({ reset }) => ({
     fileAtom,
     requestAtom,
+    startAtom,
     uploadStatus: atom<UploadStatus>((get) => {
-      if (!get(fileAtom)) {
+      if (!get(factoryAtom)) {
         return "idle";
       }
       return undefined;
@@ -89,6 +106,7 @@ export function uploadAtom<Value>({
     reset: atom(null, (_, set) => {
       set(reset);
       set(fileAtom, undefined);
+      set(factoryAtom, undefined);
     }),
   }));
 }
