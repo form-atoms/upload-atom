@@ -21,6 +21,11 @@ export type UploadAtom<Value> = ExtendFieldAtom<
      * A read-only atom containing the promise of the uploaded file's value.
      */
     requestAtom: Atom<Promise<Value> | undefined>;
+    /**
+     * A write-only atom for resetting the field atoms to their
+     * initial states.
+     */
+    reset: WritableAtom<null, [], void>;
   }
 >;
 
@@ -77,7 +82,7 @@ export function uploadAtom<Value>({
   });
 
   // @ts-expect-error field IS primitive atom
-  return extendAtom(field, ({ validateStatus }) => ({
+  return extendAtom(field, ({ validateStatus, reset }) => ({
     fileAtom,
     requestAtom,
     uploadStatus: atom<UploadStatus>((get) => {
@@ -95,6 +100,10 @@ export function uploadAtom<Value>({
       } else {
         return "error";
       }
+    }),
+    reset: atom(null, (_, set) => {
+      set(reset);
+      set(fileAtom, undefined);
     }),
   }));
 }

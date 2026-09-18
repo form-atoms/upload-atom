@@ -1,5 +1,10 @@
 import { act, renderHook } from "@testing-library/react";
-import { formAtom, useFormSubmit } from "form-atoms";
+import {
+  formAtom,
+  useFormSubmit,
+  useFieldActions,
+  useFieldValue,
+} from "form-atoms";
 import { describe, expect, it, vi } from "vitest";
 
 import { uploadAtom } from "./uploadAtom";
@@ -34,5 +39,31 @@ describe("uploadAtom()", () => {
     });
 
     expect(onSubmit).toHaveBeenCalledWith({ picture: "uploaded:selfie.jpg" });
+  });
+
+  it.only("resets with fieldActions", async () => {
+    const atom = uploadAtom({
+      upload: async (file) => {
+        console.log("waaaaaaaat");
+        return file.name;
+      },
+    });
+
+    const { result: upload } = renderHook(() => useUpload(atom));
+
+    await act(() => upload.current.setFile(new File([], "resetAction.jpg")));
+
+    const { result: value } = renderHook(() => useFieldValue(atom));
+
+    const { result: actions } = renderHook(() => useFieldActions(atom));
+
+    await act(() => actions.current.validate());
+
+    expect(value.current).toBe("resetAction.jpg");
+
+    act(() => actions.current.reset());
+
+    expect(value.current).toBeUndefined();
+    expect(upload.current.file).toBeUndefined();
   });
 });

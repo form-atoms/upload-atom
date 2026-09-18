@@ -1,11 +1,11 @@
 import { useCallback } from "react";
-import { useAtomValue, useSetAtom } from "jotai";
+import { useAtomValue, useSetAtom, useAtom } from "jotai";
 
 import type { UploadAtom } from "../atoms";
 
 export function useUpload<T>(uploadAtom: UploadAtom<T>) {
   const atoms = useAtomValue(uploadAtom);
-  const setFileAtom = useSetAtom(atoms.fileAtom);
+  const [file, setFileAtom] = useAtom(atoms.fileAtom);
   const reset = useSetAtom(atoms.reset);
 
   const setFile = useCallback(
@@ -18,5 +18,6 @@ export function useUpload<T>(uploadAtom: UploadAtom<T>) {
 
   return {
     setFile,
+    file,
   };
 }
