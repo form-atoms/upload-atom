@@ -51,11 +51,11 @@ export const ProgressFallback = formStory({
   },
   args: {
     fields: { withProgress },
-    children: ({ fields }) => (
+    children: ({ fields, autostart }) => (
       <div>
         <ErrorBoundary fallback={<p>Failed to upload. Please retry</p>}>
           <FileUpload
-            autostart={false}
+            autostart={autostart}
             atom={fields.withProgress}
             fallback={
               <Progress atom={fields.withProgress}>

@@ -6,7 +6,7 @@ import { uploadAtom } from "../atoms";
 import { PicoFieldErrors } from "../storybook/PicoFieldErrors";
 import { meta, formStory } from "../storybook/StoryForm";
 
-import { Image, Preview, IdleMessage } from "../storybook/components";
+import { Preview, IdleMessage } from "../storybook/components";
 
 export default {
   ...meta,
@@ -35,11 +35,11 @@ export const ImageUpload = formStory({
   },
   args: {
     fields: { avatar },
-    children: ({ fields }) => (
+    children: ({ fields, autostart }) => (
       <div>
         <ErrorBoundary fallback={<p>Failed to upload. Please retry</p>}>
           <FileUpload
-            autostart={false}
+            autostart={autostart}
             atom={fields.avatar}
             fallback={
               <article>

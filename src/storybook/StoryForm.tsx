@@ -13,10 +13,12 @@ type Props<Fields extends FormFields> = {
   fields: Fields;
   resettable?: boolean;
   required?: boolean;
+  autostart?: boolean;
   children: (props: {
     form: FormAtom<Fields>;
     fields: Fields;
     required: boolean;
+    autostart: boolean;
   }) => React.ReactNode;
 };
 
@@ -25,6 +27,7 @@ export const StoryForm = <Fields extends FormFields>({
   fields,
   children,
   required = true,
+  autostart = false,
 }: Props<Fields>) => {
   const form = useMemo(() => formAtom(fields), [fields]);
   const { reset, submit } = useFormActions(form);
@@ -38,7 +41,7 @@ export const StoryForm = <Fields extends FormFields>({
         action("submit")(value);
       })}
     >
-      <section>{children({ fields, required, form })}</section>
+      <section>{children({ fields, required, form, autostart })}</section>
       <div className="grid">
         <button type="submit" disabled={validateStatus === "validating"}>
           {validateStatus === "validating" ? "Submitting..." : "Submit"}
@@ -57,7 +60,10 @@ export type FormStory = StoryObj<typeof meta>;
 
 export const meta = {
   component: StoryForm,
-  args: { required: false },
+  args: {
+    required: false,
+    autostart: false,
+  },
   argTypes: {
     required: {
       description: "Whether browser should require", // TODO: does not work

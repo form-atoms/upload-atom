@@ -6,7 +6,7 @@ import { type ListItem, listAtom } from "@form-atoms/list-atom";
 import { FileUpload } from "./file-upload";
 import { uploadAtom } from "../atoms";
 import { PicoFieldErrors } from "../storybook/PicoFieldErrors";
-import { Image, Preview } from "../storybook/components";
+import { Preview } from "../storybook/components";
 import { createListStory, render } from "../storybook/createListStory";
 
 export default {
@@ -72,6 +72,7 @@ export const FileUploadList = createListStory({
                     }
                   >
                     <FileUpload
+                      autostart={false}
                       atom={fields.url}
                       fallback={
                         <p>
@@ -92,7 +93,6 @@ export const FileUploadList = createListStory({
                       )}
                     </FileUpload>
                   </ErrorBoundary>
-
                   <div>
                     <button
                       type="button"
