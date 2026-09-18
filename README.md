@@ -23,6 +23,7 @@ npm install @form-atoms/upload-atom
 - ▶️ **Manual or Automatic upload:** Start upload on file selection or manually.
 - ⚛️ **React 19**: uses the `<Suspense>` to manage the loading state.
 - 💥 **ErrorBoundary**: use the [react-error-boundary](https://www.npmjs.com/package/react-error-boundary) to catch upload errors.
+- ⏱ **Progress tracking:** Monitor the upload progress with a progress bar.
 
 ### Quick Start
 
