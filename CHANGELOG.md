@@ -1,3 +1,10 @@
+## [2.2.1](https://github.com/form-atoms/upload-atom/compare/v2.2.0...v2.2.1) (2026-09-18)
+
+
+### Bug Fixes
+
+* **submit-start:** don't start on change event ([206e6fb](https://github.com/form-atoms/upload-atom/commit/206e6fb4eabfe80b17d920d5e3512b7f3c14d30b))
+
 # [2.2.0](https://github.com/form-atoms/upload-atom/compare/v2.1.0...v2.2.0) (2026-09-18)
 
 
