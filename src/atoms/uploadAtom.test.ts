@@ -4,6 +4,7 @@ import {
   useFormSubmit,
   useFieldActions,
   useFieldValue,
+  useFieldState,
 } from "form-atoms";
 import { describe, expect, it, vi } from "vitest";
 
@@ -41,10 +42,9 @@ describe("uploadAtom()", () => {
     expect(onSubmit).toHaveBeenCalledWith({ picture: "uploaded:selfie.jpg" });
   });
 
-  it.only("resets with fieldActions", async () => {
+  it("resets with fieldActions", async () => {
     const atom = uploadAtom({
       upload: async (file) => {
-        console.log("waaaaaaaat");
         return file.name;
       },
     });
@@ -65,5 +65,27 @@ describe("uploadAtom()", () => {
 
     expect(value.current).toBeUndefined();
     expect(upload.current.file).toBeUndefined();
+  });
+
+  it("produces form field errors", async () => {
+    const atom = uploadAtom({
+      upload: async () => {
+        throw new Error("Upload failed");
+      },
+      getFieldError: (error) => [
+        error instanceof Error ? error.message : "Unknown error",
+      ],
+    });
+
+    const { result: upload } = renderHook(() => useUpload(atom));
+    const { result: actions } = renderHook(() => useFieldActions(atom));
+
+    await act(() => upload.current.setFile(new File([], "error.jpg")));
+
+    await act(() => actions.current.validate());
+
+    const { result: state } = renderHook(() => useFieldState(atom));
+
+    expect(state.current.errors).toEqual(["Upload failed"]);
   });
 });

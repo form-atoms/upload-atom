@@ -4,7 +4,7 @@ import { type Atom, type WritableAtom, atom } from "jotai";
 import { extendAtom } from "./extendAtom";
 import { type ExtendFieldAtom } from "./types";
 
-type UploadStatus = "idle" | "loading" | "error" | "success";
+type UploadStatus = "idle" | undefined;
 
 export type UploadAtom<Value> = ExtendFieldAtom<
   Value,
@@ -35,10 +35,12 @@ type UploadAtomConfig<Value> = {
     file: File,
     options: { readonly signal: AbortSignal },
   ) => Promise<Value>;
+  getFieldError?(error: unknown): string[];
 };
 
 export function uploadAtom<Value>({
   upload,
+  getFieldError,
   ...config
 }: UploadAtomConfig<Value>): UploadAtom<Value> {
   const fileAtom = atom<File | undefined>(undefined);
@@ -68,38 +70,21 @@ export function uploadAtom<Value>({
         set(get(field).value, result);
 
         return [];
-      } catch (err) {
-        if (typeof err !== "string") {
-          console.warn(
-            "uploadAtom: The error thrown from failed upload is not a string.",
-          );
-          return ["Failed to upload!"];
-        } else {
-          return [err];
-        }
+      } catch (error) {
+        return getFieldError?.(error) ?? [];
       }
     },
   });
 
   // @ts-expect-error field IS primitive atom
-  return extendAtom(field, ({ validateStatus, reset }) => ({
+  return extendAtom(field, ({ reset }) => ({
     fileAtom,
     requestAtom,
     uploadStatus: atom<UploadStatus>((get) => {
-      const status = get(validateStatus);
-
-      if (status === "validating") {
-        return "loading";
-      } else if (status === "valid") {
-        // initialy, the field is valid, so we need to switch between idle and success
-        if (!get(fileAtom) || get(get(field).value) === undefined) {
-          return "idle";
-        }
-
-        return "success";
-      } else {
-        return "error";
+      if (!get(fileAtom)) {
+        return "idle";
       }
+      return undefined;
     }),
     reset: atom(null, (_, set) => {
       set(reset);
