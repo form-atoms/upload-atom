@@ -17,7 +17,7 @@ export function useUpload<T>(uploadAtom: UploadAtom<T>) {
   );
 
   return {
-    setFile,
     file,
+    setFile,
   };
 }

@@ -6,15 +6,16 @@ import {
   useFieldValue,
   useFieldState,
 } from "form-atoms";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { uploadAtom } from "./uploadAtom";
 
-import { useUpload } from "../hooks/useUpload";
-
-vi.useFakeTimers();
+import { useProgress, useUpload } from "../hooks";
 
 describe("uploadAtom()", () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
   it("can be submitted within formAtom", async () => {
     const picture = uploadAtom({
       upload: async (file) => {
@@ -87,5 +88,41 @@ describe("uploadAtom()", () => {
     const { result: state } = renderHook(() => useFieldState(atom));
 
     expect(state.current.errors).toEqual(["Upload failed"]);
+  });
+
+  it("can signalize upload progress", async () => {
+    const atom = uploadAtom({
+      upload: async (file, { setProgress }) => {
+        return new Promise((resolve) => {
+          const total = 100;
+          let loaded = 0;
+          const interval = setInterval(() => {
+            loaded += 10;
+            console.log({ progressing: loaded / total });
+            setProgress(loaded / total);
+            if (loaded >= total) {
+              clearInterval(interval);
+              resolve(`uploaded:${file.name}`);
+            }
+          }, 10);
+        });
+      },
+    });
+
+    const { result: upload } = renderHook(() => useUpload(atom));
+    const { result: actions } = renderHook(() => useFieldActions(atom));
+
+    await act(() => upload.current.setFile(new File([], "progress.jpg")));
+    await act(() => actions.current.validate());
+
+    const { result: progress, rerender } = renderHook(() => useProgress(atom));
+
+    expect(progress.current).toBe(0);
+
+    await act(() => vi.advanceTimersToNextTimer());
+    expect(progress.current).toBeGreaterThan(0);
+
+    await act(() => vi.runAllTimers());
+    expect(progress.current).toBe(1);
   });
 });

@@ -10,9 +10,13 @@ export type UploadAtom<Value> = ExtendFieldAtom<
   Value,
   {
     /**
-     * An atom to set the file to be uploaded.
+     * A write atom to set the file to be uploaded.
      */
     fileAtom: WritableAtom<File | undefined, [File | undefined], void>;
+    /**
+     * The upload progress which you set with the `setProgress` function during the upload.
+     */
+    progressAtom: Atom<number>;
     /**
      * A read-only atom containing the field's upload status.
      */
@@ -37,7 +41,10 @@ type Options = { readonly signal: AbortSignal };
 
 type UploadAtomConfig<Value> = {
   name?: string;
-  upload: (file: File, options: Options) => Promise<Value>;
+  upload: (
+    file: File,
+    options: Options & { setProgress(progress: number): void },
+  ) => Promise<Value>;
   getFieldError?(error: unknown): string[];
 };
 
@@ -50,13 +57,18 @@ export function uploadAtom<Value>({
   const factoryAtom = atom<((options: Options) => Promise<Value>) | undefined>(
     undefined,
   );
+  const progressAtom = atom(0);
   const startAtom = atom(null, (get, set) => {
     const file = get(fileAtom);
     if (file) {
       function factory(options: Options) {
-        return upload(file!, options);
+        return upload(file!, {
+          ...options,
+          setProgress: (progress: number) => set(progressAtom, progress),
+        });
       }
 
+      set(progressAtom, 0);
       set(factoryAtom, () => factory);
     }
   });
@@ -95,6 +107,7 @@ export function uploadAtom<Value>({
   // @ts-expect-error field IS primitive atom
   return extendAtom(field, ({ reset }) => ({
     fileAtom,
+    progressAtom,
     requestAtom,
     startAtom,
     uploadStatus: atom<UploadStatus>((get) => {
@@ -107,6 +120,7 @@ export function uploadAtom<Value>({
       set(reset);
       set(fileAtom, undefined);
       set(factoryAtom, undefined);
+      set(progressAtom, 0);
     }),
   }));
 }
