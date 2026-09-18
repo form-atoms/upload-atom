@@ -1,3 +1,10 @@
+# [2.2.0](https://github.com/form-atoms/upload-atom/compare/v2.1.0...v2.2.0) (2026-09-18)
+
+
+### Features
+
+* **progress:** indicate progress from the upload function ([2c035d2](https://github.com/form-atoms/upload-atom/commit/2c035d29a76642e938c250d7934fb55017e49aac))
+
 # [2.1.0](https://github.com/form-atoms/upload-atom/compare/v2.0.1...v2.1.0) (2026-09-18)
 
 
