@@ -1,14 +1,13 @@
 import { useAtomCallback } from "jotai/utils";
 import { useCallback } from "react";
 import { ErrorBoundary } from "react-error-boundary";
-import { type FieldAtom, useFieldValue } from "form-atoms";
 import { type ListItem, listAtom } from "@form-atoms/list-atom";
 
 import { FileUpload } from "./file-upload";
 import { uploadAtom } from "../atoms";
-import { PicoFieldErrors } from "../scenarios/PicoFieldErrors";
-
-import { createListStory, render } from "../scenarios/createListStory";
+import { PicoFieldErrors } from "../storybook/PicoFieldErrors";
+import { Image, Preview } from "../storybook/components";
+import { createListStory, render } from "../storybook/createListStory";
 
 export default {
   title: "components/FileUpload",
@@ -36,14 +35,6 @@ const fileList = listAtom({
   }),
 });
 
-const Image = ({ url }: { url: FieldAtom<string> }) => {
-  const value = useFieldValue(url);
-
-  return (
-    <img width={100} height={100} style={{ marginRight: 20 }} src={value} />
-  );
-};
-
 export const FileUploadList = createListStory({
   parameters: {
     docs: {
@@ -60,56 +51,59 @@ export const FileUploadList = createListStory({
         <List.Item>
           {({ fields, remove }) => {
             return (
-              <div
-                style={{
-                  display: "grid",
-                  gridGap: 16,
-                  gridTemplateColumns: "auto min-content",
-                }}
-              >
-                <ErrorBoundary
-                  fallback={
-                    <>
-                      <p>
-                        Failed to upload. Use the <code>FieldErrors</code>{" "}
-                        component to display the reason thrown from your{" "}
-                        <code>upload</code> action:
-                      </p>
-                      <PicoFieldErrors field={fields.url} />
-                    </>
-                  }
+              <article>
+                <div
+                  style={{
+                    display: "grid",
+                    gridGap: 16,
+                    gridTemplateColumns: "auto min-content",
+                  }}
                 >
-                  <FileUpload
-                    atom={fields.url}
+                  <ErrorBoundary
                     fallback={
-                      <p>
-                        Please wait... <progress />
-                      </p>
+                      <>
+                        <p>
+                          Failed to upload. Use the <code>FieldErrors</code>{" "}
+                          component to display the reason thrown from your{" "}
+                          <code>upload</code> action:
+                        </p>
+                        <PicoFieldErrors field={fields.url} />
+                      </>
                     }
                   >
-                    {({ isSuccess }) => (
-                      <div>
-                        {isSuccess && (
-                          <p>
-                            <Image url={fields.url} />
-                            <ins>Done. </ins>
-                          </p>
-                        )}
-                      </div>
-                    )}
-                  </FileUpload>
-                </ErrorBoundary>
+                    <FileUpload
+                      atom={fields.url}
+                      fallback={
+                        <p>
+                          <Preview atom={fields.url} />
+                          <span aria-busy="true">Uploading your file...</span>
+                        </p>
+                      }
+                    >
+                      {({ isSuccess }) => (
+                        <div>
+                          {isSuccess && (
+                            <p>
+                              <Preview atom={fields.url} />
+                              <ins>Done. </ins>
+                            </p>
+                          )}
+                        </div>
+                      )}
+                    </FileUpload>
+                  </ErrorBoundary>
 
-                <div>
-                  <button
-                    type="button"
-                    className="outline secondary"
-                    onClick={remove}
-                  >
-                    Remove
-                  </button>
+                  <div>
+                    <button
+                      type="button"
+                      className="outline secondary"
+                      onClick={remove}
+                    >
+                      Remove
+                    </button>
+                  </div>
                 </div>
-              </div>
+              </article>
             );
           }}
         </List.Item>

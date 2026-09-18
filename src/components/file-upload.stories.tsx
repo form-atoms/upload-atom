@@ -3,10 +3,10 @@ import { FileUpload } from "./file-upload";
 import { FileInput } from "./file-input";
 
 import { uploadAtom } from "../atoms";
-import { PicoFieldErrors } from "../scenarios/PicoFieldErrors";
-import { meta, formStory } from "../scenarios/StoryForm";
+import { PicoFieldErrors } from "../storybook/PicoFieldErrors";
+import { meta, formStory } from "../storybook/StoryForm";
 
-import { Image, Preview, IdleMessage } from "../scenarios/components";
+import { Image, Preview, IdleMessage } from "../storybook/components";
 
 export default {
   ...meta,
@@ -42,28 +42,25 @@ export const ImageUpload = formStory({
             autostart={false}
             atom={fields.avatar}
             fallback={
-              <>
-                <p>
-                  <Preview atom={fields.avatar} />
-                  Please wait...
-                </p>
-                <progress />
-              </>
+              <article>
+                <Preview atom={fields.avatar} />
+                <span aria-busy="true">Uploading your file...</span>
+              </article>
             }
           >
             {({ isSuccess, isIdle }) => (
               <div>
                 {isIdle && (
-                  <p>
+                  <article>
                     <Preview atom={fields.avatar} />
                     <IdleMessage atom={fields.avatar} />
-                  </p>
+                  </article>
                 )}
                 {isSuccess && (
-                  <p>
-                    <Image url={fields.avatar} />
+                  <article>
+                    <Preview atom={fields.avatar} />
                     <ins>Done.</ins>
-                  </p>
+                  </article>
                 )}
               </div>
             )}

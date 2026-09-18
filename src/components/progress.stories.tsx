@@ -4,10 +4,10 @@ import { FileInput } from "./file-input";
 import { Progress } from "./progress";
 
 import { uploadAtom } from "../atoms";
-import { PicoFieldErrors } from "../scenarios/PicoFieldErrors";
-import { meta, formStory } from "../scenarios/StoryForm";
+import { PicoFieldErrors } from "../storybook/PicoFieldErrors";
+import { meta, formStory } from "../storybook/StoryForm";
 
-import { Preview, IdleMessage } from "../scenarios/components";
+import { Preview, IdleMessage } from "../storybook/components";
 
 export default {
   ...meta,
@@ -60,11 +60,13 @@ export const ProgressFallback = formStory({
             fallback={
               <Progress atom={fields.withProgress}>
                 {({ progress }) => (
-                  <>
+                  <article style={{ display: "flex" }}>
                     <Preview atom={fields.withProgress} />
-                    <p>Please wait...</p>
-                    <progress value={progress} max={1} />
-                  </>
+                    <div style={{ width: "100%" }}>
+                      <p>Please wait...</p>
+                      <progress value={progress} max={1} />
+                    </div>
+                  </article>
                 )}
               </Progress>
             }
@@ -72,16 +74,16 @@ export const ProgressFallback = formStory({
             {({ isSuccess, isIdle }) => (
               <div>
                 {isIdle && (
-                  <p>
+                  <article>
                     <Preview atom={fields.withProgress} />
                     <IdleMessage atom={fields.withProgress} />
-                  </p>
+                  </article>
                 )}
                 {isSuccess && (
-                  <p>
+                  <article>
                     <Preview atom={fields.withProgress} />
                     <ins>Done.</ins>
-                  </p>
+                  </article>
                 )}
               </div>
             )}
