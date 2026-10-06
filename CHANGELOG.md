@@ -1,3 +1,10 @@
+## [2.2.2](https://github.com/form-atoms/upload-atom/compare/v2.2.1...v2.2.2) (2026-10-06)
+
+
+### Bug Fixes
+
+* **startAtom:** set field value when upload via start, not just form submit ([ff1be80](https://github.com/form-atoms/upload-atom/commit/ff1be803afa65fd7f615eed3dd685406511c46d3))
+
 ## [2.2.1](https://github.com/form-atoms/upload-atom/compare/v2.2.0...v2.2.1) (2026-09-18)
 
 
