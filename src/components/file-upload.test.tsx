@@ -4,6 +4,7 @@ import { render, renderHook, screen, act } from "@testing-library/react";
 import { uploadAtom } from "../atoms";
 import { useUpload } from "../hooks";
 import { ErrorBoundary, getErrorMessage } from "react-error-boundary";
+import { useFieldValue } from "form-atoms";
 
 describe("FileUpload component", () => {
   it("renders idle when there is no file selected", () => {
@@ -34,6 +35,7 @@ describe("FileUpload component", () => {
       );
 
       const { result } = renderHook(() => useUpload(atom));
+      const { result: fieldValue } = renderHook(() => useFieldValue(atom));
 
       await act(async () =>
         result.current.setFile(new File([], "autostart.jpg")),
@@ -41,6 +43,7 @@ describe("FileUpload component", () => {
 
       expect(upload).toHaveBeenCalled();
       expect(screen.getByText("uploaded")).toBeInTheDocument();
+      expect(fieldValue.current).toBe("uploaded");
     });
 
     it("does not start upload when the autostart prop is false", async () => {

@@ -62,7 +62,7 @@ describe("uploadAtom()", () => {
 
     expect(value.current).toBe("resetAction.jpg");
 
-    act(() => actions.current.reset());
+    await act(() => actions.current.reset());
 
     expect(value.current).toBeUndefined();
     expect(upload.current.file).toBeUndefined();
@@ -98,7 +98,7 @@ describe("uploadAtom()", () => {
           let loaded = 0;
           const interval = setInterval(() => {
             loaded += 10;
-            console.log({ progressing: loaded / total });
+
             setProgress(loaded / total);
             if (loaded >= total) {
               clearInterval(interval);

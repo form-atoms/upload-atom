@@ -61,11 +61,15 @@ export function uploadAtom<Value>({
   const startAtom = atom(null, (get, set) => {
     const file = get(fileAtom);
     if (file) {
-      function factory(options: Options) {
-        return upload(file!, {
+      async function factory(options: Options) {
+        const value = await upload(file!, {
           ...options,
           setProgress: (progress: number) => set(progressAtom, progress),
         });
+
+        set(get(field).value, value);
+
+        return value;
       }
 
       set(progressAtom, 0);
