@@ -1,13 +1,12 @@
-import { useAtomCallback } from "jotai/utils";
-import { useCallback } from "react";
 import { ErrorBoundary } from "react-error-boundary";
-import { type ListItem, listAtom } from "@form-atoms/list-atom";
+import { listAtom } from "@form-atoms/list-atom";
 
 import { FileUpload } from "./file-upload";
 import { uploadAtom } from "../atoms";
 import { PicoFieldErrors } from "../storybook/PicoFieldErrors";
 import { IdleMessage, Preview } from "../storybook/components";
 import { createListStory, render } from "../storybook/createListStory";
+import { useSetFile } from "../hooks";
 
 export default {
   title: "components/FileUpload",
@@ -113,18 +112,8 @@ export const FileUploadList = createListStory({
           }}
         </List.Item>
         <List.Add>
-          {({ add }) => {
-            const setFileAtom = useAtomCallback(
-              useCallback(
-                (get, set, listItem: ListItem<typeof fileList>, file: File) => {
-                  const fields = get(get(listItem).fields);
-                  const uploadAtom = get(fields.url);
-
-                  set(uploadAtom.fileAtom, file);
-                },
-                [],
-              ),
-            );
+          {({ add, getItemFields }) => {
+            const setFile = useSetFile();
 
             return (
               <input
@@ -138,7 +127,9 @@ export const FileUploadList = createListStory({
                       url: "",
                     });
 
-                    setFileAtom(itemForm, file);
+                    const fields = getItemFields(itemForm);
+
+                    setFile(fields.url, file);
                   });
                 }}
               />

@@ -51,7 +51,7 @@
   },
   "devDependencies": {
     "@emotion/react": "^11.14.0",
-    "@form-atoms/list-atom": "^2.4.3",
+    "@form-atoms/list-atom": "^2.5.0",
     "@picocss/pico": "^2.1.1",
     "@semantic-release/changelog": "^7.0.0",
     "@semantic-release/commit-analyzer": "^13.0.1",
