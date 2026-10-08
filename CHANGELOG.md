@@ -1,3 +1,10 @@
+# [2.3.0](https://github.com/form-atoms/upload-atom/compare/v2.2.2...v2.3.0) (2026-10-07)
+
+
+### Features
+
+* **useSetFile:** helper action to set file in upload atoms created dynamically. E.g. in a list. ([3d536eb](https://github.com/form-atoms/upload-atom/commit/3d536eb62368b9d2e7df80a54f50dd86c4a4987c))
+
 ## [2.2.2](https://github.com/form-atoms/upload-atom/compare/v2.2.1...v2.2.2) (2026-10-06)
 
 
