@@ -1,3 +1,10 @@
+## [2.3.1](https://github.com/form-atoms/upload-atom/compare/v2.3.0...v2.3.1) (2026-10-08)
+
+
+### Bug Fixes
+
+* **start:** create request promise in the start handler (fixes [#2](https://github.com/form-atoms/upload-atom/issues/2)) ([0c7e766](https://github.com/form-atoms/upload-atom/commit/0c7e76689f5b57d96297548cde38fe3632e05b53))
+
 # [2.3.0](https://github.com/form-atoms/upload-atom/compare/v2.2.2...v2.3.0) (2026-10-07)
 
 
