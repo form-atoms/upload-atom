@@ -15,6 +15,9 @@ npm install @form-atoms/upload-atom
 <a aria-label="Code coverage report" href="https://codecov.io/gh/form-atoms/upload-atom">
   <img alt="Code coverage" src="https://img.shields.io/codecov/c/gh/form-atoms/upload-atom?style=for-the-badge&labelColor=24292e">
 </a>
+<a aria-label="Storybook" href="https://form-atoms.github.io/upload-atom/">
+  <img alt="Storybook" src="https://img.shields.io/badge/Storybook-FF4785?logo=storybook&logoColor=white&style=for-the-badge">
+</a>
 
 ## Features
 
