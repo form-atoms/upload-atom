@@ -74,6 +74,7 @@ export function uploadAtom<Value>({
 
       set(progressAtom, 0);
       set(factoryAtom, () => factory);
+      get(requestAtom);
     }
   });
 
