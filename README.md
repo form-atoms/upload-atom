@@ -43,17 +43,19 @@ import { ErrorBoundary } from "react-error-boundary";
 import { fetchUploadUrl, deliveryUrl, postFile } from "@/lib/cloudflare";
 
 // 1. define your upload atom using some file service
-export const cloudflareUploadAtom = uploadAtom(async (file) => {
-  const { id, uploadUrl } = await fetchUploadUrl();
+export const cloudflareUploadAtom = uploadAtom({
+  upload: async (file) => {
+    const { id, uploadUrl } = await fetchUploadUrl();
 
-  try {
-    await postFile(uploadUrl, file);
+    try {
+      await postFile(uploadUrl, file);
 
-    return id; // the form field value
-  } catch {
-    // Throw string reason for the failure.
-    throw "Failed to upload.";
-  }
+      return id; // the form field value
+    } catch {
+      // Throw string reason for the failure.
+      throw "Failed to upload.";
+    }
+  },
 });
 
 // 2. Use the uploadAtom inside a form as a regular fieldAtom:
@@ -126,8 +128,10 @@ export function Form() {
 import { Progress } from "@form-atoms/upload-atom";
 
 // You can use the setProgress callback to update the upload progress (if available):
-export const progressAtom = uploadAtom(async (file, { setProgress }) => {
-  return myTrackUpload(file, { onProgress: setProgress });
+export const progressAtom = uploadAtom({
+  upload: async (file, { setProgress }) => {
+    return myTrackUpload(file, { onProgress: setProgress });
+  },
 });
 
 export function Form() {
