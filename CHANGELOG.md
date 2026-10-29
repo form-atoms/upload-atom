@@ -1,3 +1,10 @@
+# [2.4.0](https://github.com/form-atoms/upload-atom/compare/v2.3.1...v2.4.0) (2026-10-29)
+
+
+### Features
+
+* **validate-file:** support a standard client validation with the "change" event. ([2ac8bcd](https://github.com/form-atoms/upload-atom/commit/2ac8bcd9602d1e709eaaf60638cf78b3f4cac8ab))
+
 ## [2.3.1](https://github.com/form-atoms/upload-atom/compare/v2.3.0...v2.3.1) (2026-10-08)
 
 
