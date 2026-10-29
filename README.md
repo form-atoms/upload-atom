@@ -156,4 +156,18 @@ export function Form() {
 }
 ```
 
+### With Validation
+
+```tsx
+import { zodValidate } from "form-atoms/zod";
+import { z } from "zod";
+
+// The validate function receives the selected file as `value` and runs
+// whenever a file is set. Return an array of error messages.
+export const avatarAtom = uploadAtom({
+  upload: async (file) => myUpload(file),
+  validateFile: zodValidate(z.file().mime("image/png"), { on: "change" }),
+});
+```
+
 See [Storybook docs](https://form-atoms.github.io/upload-atom/) for more.

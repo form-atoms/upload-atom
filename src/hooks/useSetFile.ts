@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { startTransition, useCallback } from "react";
 import { useAtomCallback } from "jotai/utils";
 import { UploadAtom } from "../atoms";
 
@@ -11,6 +11,7 @@ export function useSetFile() {
   return useAtomCallback(
     useCallback((get, set, uploadField: UploadAtom<any>, file: File) => {
       set(get(uploadField).fileAtom, file);
+      startTransition(() => set(get(uploadField).validate, "change"));
     }, []),
   );
 }

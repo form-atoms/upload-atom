@@ -3,10 +3,13 @@ import {
   formAtom,
   useFormSubmit,
   useFieldActions,
+  useFieldErrors,
   useFieldValue,
   useFieldState,
 } from "form-atoms";
+import { zodValidate } from "form-atoms/zod";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { z } from "zod";
 
 import { uploadAtom } from "./uploadAtom";
 
@@ -124,5 +127,47 @@ describe("uploadAtom()", () => {
 
     await act(() => vi.runAllTimers());
     expect(progress.current).toBe(1);
+  });
+
+  it("validates the selected file on change", async () => {
+    const atom = uploadAtom({
+      upload: async (file) => file.name,
+      validateFile: zodValidate(z.file().mime("image/png"), { on: "change" }),
+    });
+
+    const { result: upload } = renderHook(() => useUpload(atom));
+    const { result: errors } = renderHook(() => useFieldErrors(atom));
+
+    await act(() =>
+      upload.current.setFile(
+        new File(["text"], "notes.txt", { type: "text/plain" }),
+      ),
+    );
+
+    expect(errors.current.length).toBeGreaterThan(0);
+  });
+
+  it("clears validation errors when the selected file is valid", async () => {
+    const atom = uploadAtom({
+      upload: async (file) => file.name,
+      validateFile: zodValidate(z.file().mime("image/png"), { on: "change" }),
+    });
+
+    const { result: upload } = renderHook(() => useUpload(atom));
+    const { result: errors } = renderHook(() => useFieldErrors(atom));
+
+    await act(() =>
+      upload.current.setFile(
+        new File(["text"], "notes.txt", { type: "text/plain" }),
+      ),
+    );
+    expect(errors.current.length).toBeGreaterThan(0);
+
+    await act(() =>
+      upload.current.setFile(
+        new File(["png"], "selfie.png", { type: "image/png" }),
+      ),
+    );
+    expect(errors.current).toEqual([]);
   });
 });

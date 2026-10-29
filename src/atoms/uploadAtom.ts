@@ -1,4 +1,4 @@
-import { fieldAtom } from "form-atoms";
+import { type Validate, fieldAtom } from "form-atoms";
 import { type Atom, type WritableAtom, atom } from "jotai";
 
 import { extendAtom } from "./extendAtom";
@@ -46,11 +46,17 @@ type UploadAtomConfig<Value> = {
     options: Options & { setProgress(progress: number): void },
   ) => Promise<Value>;
   getFieldError?(error: unknown): string[];
+  /**
+   * Validates the selected file before it is uploaded. Receives the same
+   * state as the fieldAtom `validate`, with the selected file as `value`.
+   */
+  validateFile?: Exclude<Validate<File>, undefined>;
 };
 
 export function uploadAtom<Value>({
   upload,
   getFieldError,
+  validateFile,
   ...config
 }: UploadAtomConfig<Value>): UploadAtom<Value> {
   const fileAtom = atom<File | undefined>(undefined);
@@ -86,16 +92,21 @@ export function uploadAtom<Value>({
   const field = fieldAtom<Value | undefined>({
     ...config,
     value: undefined,
-    validate: async ({ get, set, value, event }) => {
+    validate: async (state) => {
+      const { get, set, value, event } = state;
       if (value) {
         // the file was already uploaded, the value is the response
         return [];
       }
 
       if (event === "change") {
-        // when in a list, there is a "change" event emmited when new item is added
-        // skip validation as to not start the upload prematurely
-        return;
+        // when in a list, there is a "change" event emitted when new item is added,
+        // without a file there is nothing to validate
+        const file = get(fileAtom);
+        if (!validateFile || !file) {
+          return;
+        }
+        return validateFile({ ...state, value: file });
       }
 
       try {
